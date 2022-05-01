@@ -33,10 +33,15 @@ export class Wrapper {
    */
   public newDirectory(path: string, name: string): void {
     const type: number = this.whatType(path);
+    const type2: number = this.whatType(path+'/'+name);
     // si la ruta es de un directorio y no hay directorios con ese nombre
-    if (type === 0 && (this.whatType(path+'/'+name) === -1 || this.whatType(path+'/'+name) === 1)) {
+    if (type === 0 && (type2 === -1 || type2 === 1)) {
       fs.mkdirSync(path+'/'+name);
-      console.log(chalk.yellow('Se ha creado el directorio correctamente.'));
+      console.log(chalk.magenta('Se ha creado el directorio correctamente.'));
+    } else {
+      if (type2 === 0) {
+        console.log(chalk.magenta('Ya existe un directorio con ese nombre.'));
+      }
     }
   }
   /**
@@ -50,11 +55,15 @@ export class Wrapper {
         if (err) {
           console.log(chalk.yellow('Error: ', err));
         } else {
-          files.forEach(function(file) {
-            if (fs.lstatSync(path+'/'+file).isFile()) {
-              console.log(chalk.magenta(file));
-            }
-          });
+          if (files.length === 0) {
+            console.log(chalk.magenta('No hay ficheros en este directorio.'));
+          } else {
+            files.forEach(function(file) {
+              if (fs.lstatSync(path+'/'+file).isFile()) {
+                console.log(chalk.magenta(file));
+              }
+            });
+          }
         }
       });
     }
